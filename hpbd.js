@@ -1,10 +1,9 @@
 window.addEventListener('load', () => {
-
-    // Audio logic
+    // ================= Audio =================
     const music = document.getElementById("bgMusic");
     music.play().catch(()=>{});
 
-    window.toggleMusic = function(){
+    window.toggleMusic = () => {
         const icon = document.getElementById("musicIcon");
         const btn  = document.querySelector(".music-player");
 
@@ -19,79 +18,80 @@ window.addEventListener('load', () => {
         }
     }
 
-    // Snow effect
+    // ================= Snow =================
     const canvas = document.getElementById("snowCanvas");
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     const snowflakes = [];
-    for(let i=0;i<150;i++){
+    for(let i=0; i<150; i++){
         snowflakes.push({
-            x: Math.random()*canvas.width,
-            y: Math.random()*canvas.height,
-            r: Math.random()*3+1,
-            d: Math.random()*2
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 3 + 1,
+            d: Math.random() * 2
         });
     }
 
     function drawSnow(){
         ctx.fillStyle = "white";
-        for(let f of snowflakes){
+        snowflakes.forEach(f => {
             ctx.beginPath();
-            ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+            ctx.arc(f.x, f.y, f.r, 0, 2*Math.PI);
             ctx.fill();
-            f.y += Math.pow(f.d,1.5)+0.5;
-            f.x += Math.sin(f.y*0.01)*1.5;
-            if(f.y>canvas.height){
-                f.y=0;
-                f.x=Math.random()*canvas.width;
+            f.y += Math.pow(f.d, 1.5) + 0.5;
+            f.x += Math.sin(f.y * 0.01) * 1.5;
+            if(f.y > canvas.height){
+                f.y = 0;
+                f.x = Math.random() * canvas.width;
             }
-        }
+        });
     }
 
     function animate(){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawSnow();
         requestAnimationFrame(animate);
     }
     animate();
 
-    window.addEventListener('resize', ()=>{
+    window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     });
 
-    // ================= QR code logic =================
+    // ================= QR code =================
     const generateBtn = document.getElementById("generateBtn");
     const formBox = document.querySelector(".form-box");
     const qrContainer = document.getElementById("qrContainer");
 
-    generateBtn.addEventListener('click', ()=>{
-        const name = encodeURIComponent(document.getElementById("nameInput").value || "[Tên]");
-        const msg  = encodeURIComponent(document.getElementById("msgInput").value || "[Lời chúc]");
+    generateBtn.addEventListener('click', () => {
+        const name = encodeURIComponent(document.getElementById("nameInput").value);
+        const msg  = encodeURIComponent(document.getElementById("msgInput").value);
+        const url  = `https://halinhda.github.io/monqua/card.html?name=${name}&msg=${msg}`;
 
-        // Link tuyệt đối tới GitHub Pages
-        const url = `https://halinhda.github.io/monqua/card.html?name=${name}&msg=${msg}`;
+        // Clear old QR
+        qrContainer.innerHTML = '';
 
-        qrContainer.innerHTML = ''; // xóa QR cũ
+        // Create QR canvas
         const qrCanvas = document.createElement('canvas');
         qrContainer.appendChild(qrCanvas);
 
+        // Back button
         const backBtn = document.createElement('button');
         backBtn.textContent = '🔙 Quay lại';
         backBtn.style.marginTop = '15px';
-        backBtn.onclick = ()=>{
+        backBtn.onclick = () => {
             qrContainer.innerHTML = '';
             formBox.style.display = 'block';
         };
-
         qrContainer.appendChild(backBtn);
+
         formBox.style.display = 'none';
 
-        QRCode.toCanvas(qrCanvas, url, {width:350}, function(error){
-            if(error) console.error(error);
+        QRCode.toCanvas(qrCanvas, url, {width: 350}, (err) => {
+            if(err) console.error(err);
         });
     });
-
 });
