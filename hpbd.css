@@ -1,0 +1,106 @@
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(to bottom, #0d0d0d, #1a1a2e);
+    overflow: hidden;
+    font-family: "Poppins", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.form-box {
+    position: relative;
+    z-index: 10;
+    width: 320px;
+    padding: 25px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.05);
+    box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    border: 1px solid rgba(255,215,0,0.4);
+    text-align: center;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+button {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: gold;
+    border: none;
+    border-radius: 10px;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Music Player */
+.music-player {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    background: rgba(255, 215, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid gold;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 10;
+}
+
+.music-player:hover {
+    box-shadow: 0 0 15px gold;
+}
+
+.music-circle {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 215, 0, 0.5);
+    animation: spin 4s linear infinite;
+    pointer-events: none;
+    opacity: 0;
+    transition: 0.3s;
+}
+
+#musicIcon {
+    font-size: 22px;
+    color: gold;
+    z-index: 10;
+}
+
+.playing .music-circle {
+    opacity: 1;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Canvas full screen for snow */
+#snowCanvas {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index: 1;
+}

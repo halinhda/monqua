@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Thiệp Luxury Gold</title>
+
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: radial-gradient(circle at center, #222, #000);
+        height: 100vh;
+        color: white;
+        font-family: "Playfair Display", serif;
+        position: relative;
+    }
+
+    /* Gold wave light */
+    .gold-wave {
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        background: conic-gradient(from 180deg, rgba(255,215,0,0.3), transparent 40%);
+        animation: rotate 12s linear infinite;
+        filter: blur(80px);
+        z-index: 1;
+    }
+
+    @keyframes rotate {
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Card box */
+    .card-box {
+        position: relative;
+        z-index: 3;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,215,0,0.4);
+        width: 380px;
+        padding: 35px;
+        border-radius: 20px;
+        text-align: center;
+        margin: auto;
+        top: 50%;
+        transform: translateY(-50%);
+        box-shadow: 0 0 25px rgba(255,215,0,0.3);
+        backdrop-filter: blur(6px);
+        animation: fadeIn 1.8s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-40px); }
+        to   { opacity: 1; transform: translateY(-50%); }
+    }
+
+    h1 {
+        font-size: 34px;
+        margin-bottom: 15px;
+        color: gold;
+        text-shadow: 0 0 15px rgba(255,215,0,0.8);
+    }
+
+    /* Gold particles */
+    .particle {
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        background: gold;
+        border-radius: 50%;
+        animation: rise linear infinite;
+        opacity: 0.7;
+        z-index: 2;
+    }
+
+    @keyframes rise {
+        0% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(-120vh); opacity: 0; }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="gold-wave"></div>
+
+<div class="card-box">
+    <h1>Happy Birthday</h1>
+    <h2 id="nameDisplay"></h2>
+    <p id="msgDisplay"></p>
+</div>
+
+<script>
+// Lấy dữ liệu từ URL
+const url = new URLSearchParams(window.location.search);
+document.getElementById("nameDisplay").innerText = url.get("name") || "[Tên]";
+document.getElementById("msgDisplay").innerText = url.get("msg") || "[Lời chúc]";
+
+// tạo particles
+for (let i = 0; i < 80; i++) {
+    let p = document.createElement("div");
+    p.classList.add("particle");
+
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.top = Math.random() * 100 + 100 + "vh";
+    p.style.animationDuration = 4 + Math.random()*4 + "s";
+    p.style.opacity = 0.5 + Math.random()*0.5;
+
+    document.body.appendChild(p);
+}
+</script>
+
+</body>
+</html>
