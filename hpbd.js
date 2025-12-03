@@ -2,7 +2,7 @@ window.addEventListener('load', () => {
 
     // ================= Audio logic =================
     const music = document.getElementById("bgMusic");
-    music.play().catch(() => {});
+    music.play().catch(()=>{});
 
     window.toggleMusic = function() {
         const icon = document.getElementById("musicIcon");
@@ -64,44 +64,36 @@ window.addEventListener('load', () => {
         canvas.height = window.innerHeight;
     });
 
-    // ================= QR code =================
-    const btnGenerate = document.getElementById('generateBtn');
-    const formBox = document.querySelector('.form-box');
-    const qrContainer = document.getElementById('qrContainer');
+    // ================= QR code logic =================
+    const generateBtn = document.getElementById("generateBtn");
+    const formBox = document.querySelector(".form-box");
+    const qrContainer = document.getElementById("qrContainer");
 
-    btnGenerate.addEventListener('click', () => {
-        const name = encodeURIComponent(document.getElementById("nameInput").value.trim());
-        const msg  = encodeURIComponent(document.getElementById("msgInput").value.trim());
-        if(!name && !msg){
-            alert("Hãy nhập tên hoặc lời chúc!");
-            return;
-        }
-        const url = `card.html?name=${name}&msg=${msg}`;
+    generateBtn.addEventListener('click', ()=>{
+        const name = encodeURIComponent(document.getElementById("nameInput").value);
+        const msg  = encodeURIComponent(document.getElementById("msgInput").value);
+        const url = `https://halinhda.github.io/Monqua/card.html?name=${name}&msg=${msg}`;
 
-        // Clear previous QR
+        // Xóa QR cũ
         qrContainer.innerHTML = '';
 
-        // Tạo QR canvas
+        // Tạo canvas QR
         const qrCanvas = document.createElement('canvas');
         qrContainer.appendChild(qrCanvas);
 
-        // Tạo QR
-        QRCode.toCanvas(qrCanvas, url, {width:350}, function(error){
-            if(error) console.error(error);
-        });
-
-        // Ẩn form
-        formBox.style.display = 'none';
-
-        // Nút quay lại
         const backBtn = document.createElement('button');
         backBtn.textContent = '🔙 Quay lại';
         backBtn.style.marginTop = '15px';
-        backBtn.onclick = () => {
+        backBtn.onclick = ()=>{
             qrContainer.innerHTML = '';
             formBox.style.display = 'block';
         };
-        qrContainer.appendChild(backBtn);
-    });
 
+        qrContainer.appendChild(backBtn);
+        formBox.style.display = 'none';
+
+        QRCode.toCanvas(qrCanvas, url, {width:350}, function(error){
+            if(error) console.error(error);
+        });
+    });
 });
