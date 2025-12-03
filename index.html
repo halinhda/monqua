@@ -2,21 +2,23 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Thiệp</title>
+<title>Thiệp Luxury Gold</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="hpbd.css">
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
 <body>
 
 <canvas id="snowCanvas"></canvas>
 
 <div class="form-box">
-    <h2>🎉 Tạo Thiệp 🎉</h2>
+    <h2>🎉 Tạo Thiệp Luxury Gold 🎉</h2>
     <input id="nameInput" placeholder="Tên người nhận...">
     <textarea id="msgInput" rows="3" placeholder="Lời chúc..."></textarea>
     <button id="generateBtn">Tạo Thiệp</button>
 </div>
 
-<div id="qrContainer" style="margin-top:20px; text-align:center;"></div>
+<div id="qrContainer"></div>
 
 <div class="music-player" onclick="toggleMusic()">
     <div class="music-circle"></div>
@@ -27,7 +29,6 @@
     <source src="music/HAN SARA - I’M YOUR CHRISTMAS PRESENT.mp3" type="audio/mpeg">
 </audio>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <script src="hpbd.js"></script>
 </body>
 </html>
