@@ -1,14 +1,14 @@
 window.addEventListener('load', () => {
 
-    // ================= Audio logic =================
+    // Audio logic
     const music = document.getElementById("bgMusic");
     music.play().catch(()=>{});
 
-    window.toggleMusic = function() {
+    window.toggleMusic = function(){
         const icon = document.getElementById("musicIcon");
         const btn  = document.querySelector(".music-player");
 
-        if (music.paused) {
+        if(music.paused){
             icon.textContent = "⏸";
             btn.classList.add("playing");
             music.play().catch(()=>{});
@@ -19,15 +19,14 @@ window.addEventListener('load', () => {
         }
     }
 
-    // ================= Snow effect =================
+    // Snow effect
     const canvas = document.getElementById("snowCanvas");
     const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     const snowflakes = [];
-    const numFlakes = 150;
-    for(let i=0;i<numFlakes;i++){
+    for(let i=0;i<150;i++){
         snowflakes.push({
             x: Math.random()*canvas.width,
             y: Math.random()*canvas.height,
@@ -38,16 +37,15 @@ window.addEventListener('load', () => {
 
     function drawSnow(){
         ctx.fillStyle = "white";
-        for(let i=0;i<numFlakes;i++){
-            const f = snowflakes[i];
+        for(let f of snowflakes){
             ctx.beginPath();
             ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
             ctx.fill();
             f.y += Math.pow(f.d,1.5)+0.5;
             f.x += Math.sin(f.y*0.01)*1.5;
             if(f.y>canvas.height){
-                f.y = 0;
-                f.x = Math.random()*canvas.width;
+                f.y=0;
+                f.x=Math.random()*canvas.width;
             }
         }
     }
@@ -70,14 +68,13 @@ window.addEventListener('load', () => {
     const qrContainer = document.getElementById("qrContainer");
 
     generateBtn.addEventListener('click', ()=>{
-        const name = encodeURIComponent(document.getElementById("nameInput").value);
-        const msg  = encodeURIComponent(document.getElementById("msgInput").value);
-        const url = `https://halinhda.github.io/Monqua/card.html?name=${name}&msg=${msg}`;
+        const name = encodeURIComponent(document.getElementById("nameInput").value || "[Tên]");
+        const msg  = encodeURIComponent(document.getElementById("msgInput").value || "[Lời chúc]");
 
-        // Xóa QR cũ
-        qrContainer.innerHTML = '';
+        // Link tuyệt đối tới GitHub Pages
+        const url = `https://halinhda.github.io/monqua/card.html?name=${name}&msg=${msg}`;
 
-        // Tạo canvas QR
+        qrContainer.innerHTML = ''; // xóa QR cũ
         const qrCanvas = document.createElement('canvas');
         qrContainer.appendChild(qrCanvas);
 
@@ -96,4 +93,5 @@ window.addEventListener('load', () => {
             if(error) console.error(error);
         });
     });
+
 });
