@@ -1,13 +1,13 @@
 body {
     margin: 0;
     height: 100vh;
-    background: linear-gradient(to bottom, #0d0d0d, #1a1a2e);
     overflow: hidden;
     font-family: "Poppins", sans-serif;
     color: white;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background 0.5s ease;
 }
 
 /* Form responsive */
@@ -18,21 +18,23 @@ body {
     max-width: 360px;
     padding: 20px;
     border-radius: 15px;
-    background: rgba(255,255,255,0.05);
-    box-shadow: 0 0 20px rgba(255,215,0,0.3);
-    border: 1px solid rgba(255,215,0,0.4);
+    background: rgba(0,0,0,0.4); /* nền tối hơn để chữ nổi */
+    box-shadow: 0 0 20px rgba(255,215,0,0.4);
+    border: 1px solid rgba(255,215,0,0.6);
     text-align: center;
 }
 
-input, textarea {
+select, input, textarea {
     width: 100%;
     padding: 10px;
     margin-top: 12px;
     border-radius: 10px;
     border: none;
     outline: none;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.12);
     color: white;
+    font-size: 14px;
+    backdrop-filter: blur(6px);
 }
 
 button {
@@ -86,7 +88,10 @@ button {
 
 .playing .music-circle { opacity: 1; }
 
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes spin { 
+    from { transform: rotate(0deg); } 
+    to { transform: rotate(360deg); } 
+}
 
 /* Canvas full screen for snow */
 #snowCanvas {
@@ -103,4 +108,28 @@ button {
     text-align: center;
     margin-top: 15px;
     z-index: 10;
+}
+
+/* ================================ */
+/*      MÀU NỀN TỪNG DỊP (UPDATED)  */
+/* ================================ */
+
+/* 🎂 SINH NHẬT – tăng độ sáng, chuyển cam-đỏ rõ hơn */
+body[data-occasion="birthday"] {
+    background: linear-gradient(135deg, #ff1e4d, #ffb347);
+}
+
+/* 🎄 GIÁNG SINH – xanh + đỏ + độ tương phản mạnh */
+body[data-occasion="christmas"] {
+    background: linear-gradient(135deg, #021409, #004d26);
+}
+
+/* 💗 QUỐC TẾ PHỤ NỮ – hồng neon rõ và sạch */
+body[data-occasion="womensday"] {
+    background: linear-gradient(135deg, #ff4fa8, #ffb6dd);
+}
+
+/* 🏮 TRUNG THU – mới, vàng cam sáng rõ nét */
+body[data-occasion="midautumn"] {
+    background: linear-gradient(135deg, #ffb300, #ff6d00);
 }

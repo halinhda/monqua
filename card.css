@@ -1,0 +1,132 @@
+/* =============================== */
+/*          BASE LAYOUT            */
+/* =============================== */
+
+body {
+    margin: 0;
+    overflow: hidden;
+    height: 100vh;
+    color: white;
+    font-family: "Playfair Display", serif;
+    position: relative;
+    transition: background 0.5s ease;
+}
+
+/* =============================== */
+/*          BACKGROUND THEMES      */
+/* =============================== */
+
+body[data-theme="birthday"] {
+    background: radial-gradient(circle at center, #440015, #000);
+}
+
+body[data-theme="christmas"] {
+    background: radial-gradient(circle at center, #01320f, #000);
+}
+
+body[data-theme="womensday"] {
+    background: radial-gradient(circle at center, #680034, #000);
+}
+
+body[data-theme="midautumn"] {
+    background: radial-gradient(circle at center, #4a2600, #000);
+}
+
+/* =============================== */
+/*         GOLD WAVE EFFECT        */
+/* =============================== */
+
+.gold-wave {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: conic-gradient(from 180deg, rgba(255,215,0,0.3), transparent 40%);
+    animation: rotate 12s linear infinite;
+    filter: blur(80px);
+    z-index: 1;
+}
+
+@keyframes rotate {
+    to { transform: rotate(360deg); }
+}
+
+/* =============================== */
+/*            CARD BOX             */
+/* =============================== */
+
+.card-box {
+    position: relative;
+    z-index: 3;
+    width: 380px;
+    padding: 35px;
+    border-radius: 20px;
+    text-align: center;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: fadeIn 1.2s ease;
+    backdrop-filter: blur(8px);
+}
+
+/* CARD BORDER CHO TỪNG THEME */
+.card-box[data-theme="birthday"] {
+    background: rgba(255,105,180,0.08);
+    border: 1px solid rgba(255,120,180,0.55);
+    box-shadow: 0 0 25px rgba(255,120,180,0.45);
+}
+
+.card-box[data-theme="christmas"] {
+    background: rgba(0,150,60,0.08);
+    border: 1px solid rgba(0,255,90,0.4);
+    box-shadow: 0 0 25px rgba(0,255,90,0.35);
+}
+
+.card-box[data-theme="womensday"] {
+    background: rgba(255,60,150,0.08);
+    border: 1px solid rgba(255,80,180,0.55);
+    box-shadow: 0 0 25px rgba(255,80,180,0.4);
+}
+
+.card-box[data-theme="midautumn"] {
+    background: rgba(255,170,50,0.08);
+    border: 1px solid rgba(255,200,80,0.55);
+    box-shadow: 0 0 25px rgba(255,200,80,0.4);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-40px); }
+    to   { opacity: 1; transform: translateY(-50%); }
+}
+
+/* =============================== */
+/*             TITLES              */
+/* =============================== */
+
+h1 {
+    font-size: 34px;
+    margin-bottom: 15px;
+    color: gold;
+    text-shadow: 0 0 15px rgba(255,215,0,0.8);
+}
+
+/* =============================== */
+/*         GOLD PARTICLES          */
+/* =============================== */
+
+.particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: gold;
+    border-radius: 50%;
+    animation: rise linear infinite;
+    opacity: 0.7;
+    z-index: 2;
+}
+
+@keyframes rise {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-120vh); opacity: 0; }
+}

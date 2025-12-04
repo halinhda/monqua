@@ -1,80 +1,147 @@
-window.addEventListener('load', () => {
-    const music = document.getElementById("bgMusic");
-    music.play().catch(()=>{});
+/* ===========================================================
+   HPBD.JS — FULL VERSION (LONG, CLEAN, PRO STRUCTURE)
+   Project: Multi-Occasion Greeting Generator
+   Author: Linn ✦ ChatGPT Dev Team
+   =========================================================== */
 
-    window.toggleMusic = function() {
-        const icon = document.getElementById("musicIcon");
-        const btn  = document.querySelector(".music-player");
-        if (music.paused) {
-            icon.textContent = "⏸"; btn.classList.add("playing"); music.play().catch(()=>{});
-        } else {
-            music.pause(); icon.textContent = "▶"; btn.classList.remove("playing");
-        }
-    }
+// GLOBAL =====================================================
+console.log("%c[HPBD] JS Loaded Successfully!", "color:#00ffaa;font-weight:bold;");
 
-    // Snow effect
-    const canvas = document.getElementById("snowCanvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+window.addEventListener("DOMContentLoaded", () => {
 
-    const snowflakes = [];
-    for(let i=0;i<150;i++){
-        snowflakes.push({
-            x: Math.random()*canvas.width,
-            y: Math.random()*canvas.height,
-            r: Math.random()*3+1,
-            d: Math.random()*2
+    /* -------------------------------------------------------
+       SECTION 1 — PARSE URL PARAMETERS
+    --------------------------------------------------------*/
+    const params = new URLSearchParams(window.location.search);
+
+    const occ  = params.get("occ") || "birthday";
+    const name = decodeURIComponent(params.get("name") || "");
+    const msg  = decodeURIComponent(params.get("msg")  || "");
+
+    console.log("%c[PARAMS] occ=" + occ, "color:#ffcc00");
+    console.log("[PARAMS] name=", name);
+    console.log("[PARAMS] msg =", msg);
+
+
+    /* -------------------------------------------------------
+       SECTION 2 — CARD DEFINITIONS
+       Chỉ cần add thêm dịp là chạy auto
+    --------------------------------------------------------*/
+    const CARD_MAP = {
+        birthday:   { id: "cardBirthday",   nameID: "nameBirthday",   msgID: "msgBirthday" },
+        christmas:  { id: "cardChristmas",  nameID: "nameChristmas",  msgID: "msgChristmas" },
+        womensday:  { id: "cardWomens",     nameID: "nameWomens",     msgID: "msgWomens" },
+        love:       { id: "cardLove",       nameID: "nameLove",       msgID: "msgLove" },
+        midautumn:  { id: "cardMidautumn",  nameID: "nameMidautumn",  msgID: "msgMidautumn" }
+    };
+
+    const allCards = Object.values(CARD_MAP).map(c => c.id);
+
+
+    /* -------------------------------------------------------
+       SECTION 3 — HIDE ALL CARDS
+    --------------------------------------------------------*/
+    function hideAllCards() {
+        allCards.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = "none";
+                el.style.opacity = "0";
+            }
         });
     }
 
-    function drawSnow(){
-        ctx.fillStyle = "white";
-        for(let f of snowflakes){
-            ctx.beginPath();
-            ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
-            ctx.fill();
-            f.y += Math.pow(f.d,1.5)+0.5;
-            f.x += Math.sin(f.y*0.01)*1.5;
-            if(f.y>canvas.height){ f.y=0; f.x=Math.random()*canvas.width; }
+    hideAllCards();
+
+
+    /* -------------------------------------------------------
+       SECTION 4 — SHOW CARD WITH ANIMATION
+    --------------------------------------------------------*/
+    function showCardAnimated(cardID, nameID, msgID) {
+        const card = document.getElementById(cardID);
+
+        if (!card) {
+            console.error("[ERROR] Card không tồn tại:", cardID);
+            return;
+        }
+
+        // Set name + msg
+        document.getElementById(nameID).innerText = name;
+        document.getElementById(msgID).innerText  = msg;
+
+        // Hiện card
+        card.style.display = "block";
+
+        // Animation
+        setTimeout(() => {
+            card.style.transition = "opacity 0.8s ease, transform 0.8s ease";
+            card.style.opacity = "1";
+            card.style.transform = "translateY(0)";
+        }, 30);
+    }
+
+
+    /* -------------------------------------------------------
+       SECTION 5 — OCCASION HANDLER
+    --------------------------------------------------------*/
+    function renderOccasion(occKey) {
+        console.log("%c[OCCASION] Rendering: " + occKey, "color:#00ddff;font-weight:bold;");
+
+        const card = CARD_MAP[occKey] || CARD_MAP["birthday"];
+
+        showCardAnimated(card.id, card.nameID, card.msgID);
+    }
+
+    renderOccasion(occ);
+
+
+    /* -------------------------------------------------------
+       SECTION 6 — OPTIONAL: THEMES FOR EACH CARD
+    --------------------------------------------------------*/
+    const OCC_THEMES = {
+        birthday:   "#ffdde1",
+        christmas:  "#0d0d0d",
+        womensday:  "#ffe6f0",
+        love:       "#ff99bb",
+        midautumn:  "#3b1b00"
+    };
+
+    function applyTheme() {
+        const bg = OCC_THEMES[occ] || OCC_THEMES["birthday"];
+        document.body.style.background = bg;
+    }
+
+    applyTheme();
+
+
+    /* -------------------------------------------------------
+       SECTION 7 — OPTIONAL: MUSIC AUTO PLAY (Nếu cần)
+    --------------------------------------------------------*/
+    const music = document.getElementById("bgMusic");
+    if (music) {
+        const musicKey = params.get("music") || occ;
+
+        const MUSIC_MAP = {
+            birthday:   "music/birthday.mp3",
+            christmas:  "music/christmas.mp3",
+            womensday:  "music/womensday.mp3",
+            love:       "music/love.mp3",
+            midautumn:  "music/midautumn.mp3"
+        };
+
+        if (MUSIC_MAP[musicKey]) {
+            music.src = MUSIC_MAP[musicKey];
+
+            music.play().catch(() => {
+                console.warn("[AUDIO] Không autoplay được, phải bấm user gesture.");
+            });
         }
     }
 
-    function animate(){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        drawSnow();
-        requestAnimationFrame(animate);
-    }
-    animate();
 
-    window.addEventListener('resize', ()=>{
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
+    /* -------------------------------------------------------
+       SECTION 8 — LOG DEBUG
+    --------------------------------------------------------*/
+    console.log("%c[DONE] Thiệp đã render đúng!", "color:#00ff88;font-weight:bold;");
 
-    // QR code
-    const generateBtn = document.getElementById("generateBtn");
-    const formBox = document.querySelector(".form-box");
-    const qrContainer = document.getElementById("qrContainer");
-
-    generateBtn.addEventListener('click', ()=>{
-        const name = encodeURIComponent(document.getElementById("nameInput").value);
-        const msg  = encodeURIComponent(document.getElementById("msgInput").value);
-        const url = `https://halinhda.github.io/monqua/card.html?name=${name}&msg=${msg}`;
-
-        qrContainer.innerHTML = '';
-
-        const qrCanvas = document.createElement('canvas');
-        qrContainer.appendChild(qrCanvas);
-
-        const backBtn = document.createElement('button');
-        backBtn.textContent = '🔙 Quay lại';
-        backBtn.style.marginTop = '10px';
-        backBtn.onclick = ()=>{ qrContainer.innerHTML=''; formBox.style.display='block'; };
-        qrContainer.appendChild(backBtn);
-
-        formBox.style.display = 'none';
-
-        QRCode.toCanvas(qrCanvas, url, {width:300}, function(err){ if(err) console.error(err); });
-    });
 });

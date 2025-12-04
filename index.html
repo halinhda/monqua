@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Thiệp Luxury Gold</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="hpbd.css">
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -13,22 +11,45 @@
 
 <div class="form-box">
     <h2>🎉 Tạo Thiệp Luxury Gold 🎉</h2>
+
+    <!-- CHỌN DỊP -->
+    <label>Chọn dịp:</label>
+    <select id="occasionSelect">
+        <option value="birthday">🎂 Sinh nhật</option>
+        <option value="christmas">🎄 Giáng sinh</option>
+        <option value="womensday">🌸 8/3</option>
+        <option value="love">💖 Tình yêu</option>
+        <option value="midautumn">🏮 Trung thu</option>
+    </select>
+
+    <!-- CHỌN NHẠC -->
+    <label>Chọn nhạc cho thiệp:</label>
+    <select id="musicSelect">
+        <option value="none">🚫 Không nhạc</option>
+        <option value="happybirthday.mp3">🎶 Happy Birthday</option>
+        <option value="jinglebells.mp3">🔔 Jingle Bells</option>
+        <option value="83.mp3">🌸 Em Là Con Gái Việt Nam</option>
+        <option value="love.mp3">💞 Love Ballad</option>
+    </select>
+
     <input id="nameInput" placeholder="Tên người nhận...">
     <textarea id="msgInput" rows="3" placeholder="Lời chúc..."></textarea>
+
     <button id="generateBtn">Tạo Thiệp</button>
 </div>
 
 <div id="qrContainer"></div>
 
+<!-- NÚT NHẠC – GIỮ NGUYÊN -->
 <div class="music-player" onclick="toggleMusic()">
     <div class="music-circle"></div>
     <span id="musicIcon">▶</span>
 </div>
 
-<audio id="bgMusic" preload="auto" loop>
-    <source src="music/HAN SARA - I’M YOUR CHRISTMAS PRESENT.mp3" type="audio/mpeg">
-</audio>
+<audio id="bgMusic" preload="auto" loop></audio>
 
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 <script src="hpbd.js"></script>
+
 </body>
 </html>
