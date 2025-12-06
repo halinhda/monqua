@@ -1,99 +1,172 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-<meta charset="UTF-8">
-<title>Thiệp Chúc Mừng</title>
-<link rel="stylesheet" href="card.css">
+    <meta charset="UTF-8">
+    <title>Thiệp Chúc Mừng</title>
+    <link rel="stylesheet" href="card.css">
+    <link href="https://fonts.cdnfonts.com/css/halimum" rel="stylesheet">
+    
 </head>
 
 <body>
 
-<div class="gold-wave"></div>
+    <!-- Nền và hiệu ứng -->
+    <div class="gold-wave"></div>
+    <div id="particleContainer" class="particle-container"></div>
+    <canvas id="snowStar"></canvas>
 
-<!-- ======== CARD: SINH NHẬT ======== -->
-<div class="card-box card-birthday" id="cardBirthday">
-    <h1>🎂 Happy Birthday</h1>
-    <h2 id="nameBirthday"></h2>
-    <p id="msgBirthday"></p>
-</div>
+    <!-- Video đếm ngược -->
+    <div id="videoOverlay" class="video-overlay">
+        <video id="countdownVideo" src="anh/cmsn.mp4" autoplay playsinline></video>
+    </div>
 
-<!-- ======== CARD: GIÁNG SINH ======== -->
-<div class="card-box card-christmas" id="cardChristmas">
-    <h1>🎄 Merry Christmas</h1>
-    <img src="img/tree.png" class="tree">
-    <h2 id="nameChristmas"></h2>
-    <p id="msgChristmas"></p>
-</div>
+    <!-- ========== CARD SINH NHẬT ========== -->
+    <div class="card-box card-birthday" id="cardBirthday">
+        <h1 class="birthday-title">🎂 Happy Birthday</h1>
+        <div class="image-slider">
+            <div class="slider-track">
+                <img src="anh/banhsn.jpg">
+                <img src="anh/thu1.jpg">
+                <img src="anh/banhsn2.jpg">
+                <img src="anh/banhsn3.jpg">
+                <img src="anh/banhsn4.jpg">
+                <img src="anh/banhsn5.jpg">
+                <img src="anh/banhsn6.jpg">
+            </div>
+        </div>
+        <h2 id="nameBirthday"></h2>
+        <p id="msgBirthday"></p>
+    </div>
 
-<!-- ======== CARD: 8/3 ======== -->
-<div class="card-box card-womens" id="cardWomens">
-    <h1>💗 Happy Women's Day</h1>
-    <img src="img/flower.png" class="flower">
-    <h2 id="nameWomens"></h2>
-    <p id="msgWomens"></p>
-</div>
+    <!-- ========== CARD GIÁNG SINH ========== -->
+    <div class="card-box card-christmas" id="cardChristmas">
+        <h1>🎄 Merry Christmas</h1>
+        <img src="anh/caythongnoel.jpg" class="tree">
+        <h2 id="nameChristmas"></h2>
+        <p id="msgChristmas"></p>
+    </div>
 
-<!-- ======== CARD: TÌNH YÊU ======== -->
-<div class="card-box card-love" id="cardLove">
-    <h1>💖 Love Message</h1>
-    <img src="img/heart.png" class="heart">
-    <h2 id="nameLove"></h2>
-    <p id="msgLove"></p>
-</div>
+    <!-- ========== CARD 8/3 ========== -->
+    <div class="card-box card-womens" id="cardWomens">
+        <h1>💗 Happy Women's Day</h1>
+        <img src="img/flower.png" class="flower">
+        <h2 id="nameWomens"></h2>
+        <p id="msgWomens"></p>
+    </div>
 
-<!-- ======== CARD: TRUNG THU ======== -->
-<div class="card-box card-midautumn" id="cardMidautumn">
-    <h1>🏮 Happy Mid-Autumn</h1>
-    <img src="img/moon.png" class="moon">
-    <h2 id="nameMidautumn"></h2>
-    <p id="msgMidautumn"></p>
-</div>
+    <!-- ========== CARD TÌNH YÊU ========== -->
+    <div class="card-box card-love" id="cardLove">
+        <h1>💖 Love Message</h1>
+        <img src="img/heart.png" class="heart">
+        <h2 id="nameLove"></h2>
+        <p id="msgLove"></p>
+    </div>
 
-<script src="hpbd.js"></script>
+    <!-- ========== CARD TRUNG THU ========== -->
+    <div class="card-box card-midautumn" id="cardMidautumn">
+        <h1>🏮 Happy Mid-Autumn</h1>
+        <img src="img/moon.png" class="moon">
+        <h2 id="nameMidautumn"></h2>
+        <p id="msgMidautumn"></p>
+    </div>
 
-<script>
-const url = new URLSearchParams(window.location.search);
-const name = decodeURIComponent(url.get("name") || "");
-const msg  = decodeURIComponent(url.get("msg") || "");
-const occ  = url.get("occ") || "birthday";
+    <!-- ========== BỨC THƯ LỜI CHÚC ========== -->
+    <div class="ui-wrapper">
+        <button id="openLetterBtn" class="letter-btn">💌</button>
+        <button id="loveBtn" class="love-dialog">💗 Chạm vào đây</button>
+    </div>
 
-// Ẩn hết
-const allCards = ["cardBirthday", "cardChristmas", "cardWomens", "cardLove", "cardMidautumn"];
-allCards.forEach(id => document.getElementById(id).style.display = "none");
+    <div id="letterPopup" class="letter-popup">
+        <div class="letter-content">
+            <span id="closeLetter" class="close-btn">&times;</span>
+            <h2 class="letter-title">Gửi bạn nè 💖</h2>
+            <p id="letterText" class="letter-text"></p>
+        </div>
+        <div id="heartContainer" class="heart-container"></div>
+    </div>
 
-// Hiện đúng card theo occasion
-function showCard(idCard, idName, idMsg){
-    document.getElementById(idCard).style.display = "block";
-    document.getElementById(idName).innerText = name;
-    document.getElementById(idMsg).innerText  = msg;
-}
+    <!-- ========== NHẠC ========== -->
+    <!--<audio id="letterSound" src="music/snhan.mp3"></audio>-->
+    <audio id="bgm" autoplay loop playsinline>
+        <source src="music/snhan.mp3" type="audio/mpeg">
+    </audio>
 
-switch (occ) {
-    case "birthday":
-        showCard("cardBirthday", "nameBirthday", "msgBirthday");
-        break;
+    <!-- NÚT BẬT/TẮT NHẠC -->
+    <div id="musicToggle" class="music-btn">🎵</div>
 
-    case "christmas":
-        showCard("cardChristmas", "nameChristmas", "msgChristmas");
-        break;
+    <!-- ========== IMAGE ZOOM VIEWER ========== -->
+    <div class="img-zoom-viewer" id="zoomViewer">
+        <img id="zoomImg" src="">
+    </div>
 
-    case "womensday":
-        showCard("cardWomens", "nameWomens", "msgWomens");
-        break;
+    <!-- ========== SCRIPT ========== -->
+    <script src="card.js"></script>
+    <script src="hpbd.js"></script>
 
-    case "love":
-        showCard("cardLove", "nameLove", "msgLove");
-        break;
+    <script>
+        // Lấy thông tin từ URL
+        const url = new URLSearchParams(window.location.search);
+        const name = decodeURIComponent(url.get("name") || "");
+        const msg = decodeURIComponent(url.get("msg") || "");
+        const occ = url.get("occ") || "birthday";
 
-    case "midautumn":
-        showCard("cardMidautumn", "nameMidautumn", "msgMidautumn");
-        break;
+        // Ẩn tất cả card
+        const allCards = ["cardBirthday", "cardChristmas", "cardWomens", "cardLove", "cardMidautumn"];
+        allCards.forEach(id => document.getElementById(id).style.display = "none");
 
-    default:
-        showCard("cardBirthday", "nameBirthday", "msgBirthday");
-}
-</script>
+        // Hiện đúng card
+        function showCard(idCard, idName, idMsg) {
+            document.getElementById(idCard).style.display = "block";
+            document.getElementById(idName).innerText = name;
+            document.getElementById(idMsg).innerText = msg;
+        }
 
+        switch (occ) {
+            case "birthday":
+                showCard("cardBirthday", "nameBirthday", "msgBirthday");
+                break;
+            case "christmas":
+                showCard("cardChristmas", "nameChristmas", "msgChristmas");
+                break;
+            case "womensday":
+                showCard("cardWomens", "nameWomens", "msgWomens");
+                break;
+            case "love":
+                showCard("cardLove", "nameLove", "msgLove");
+                break;
+            case "midautumn":
+                showCard("cardMidautumn", "nameMidautumn", "msgMidautumn");
+                break;
+            default:
+                showCard("cardBirthday", "nameBirthday", "msgBirthday");
+        }
+    </script>
+
+    <script>
+        // Nút bật/tắt nhạc nền
+        const audio = document.getElementById("bgm");
+        const btn = document.getElementById("musicToggle");
+
+        if (audio && btn) {
+            btn.addEventListener("click", () => {
+                if (audio.paused) {
+                    audio.play().catch(() => { });
+                    btn.classList.add("playing");
+                    btn.textContent = "🔊";
+                } else {
+                    audio.pause();
+                    btn.classList.remove("playing");
+                    btn.textContent = "🔇";
+                }
+            });
+
+            audio.addEventListener("play", () => btn.classList.add("playing"));
+            audio.addEventListener("pause", () => btn.classList.remove("playing"));
+        }
+    </script>
+    
 
 </body>
+
 </html>
