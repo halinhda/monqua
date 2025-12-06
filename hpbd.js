@@ -8,10 +8,18 @@
 (function () {
   "use strict";
 
-  // small util
-  const LOG = (...args) => console.log("%c[HPBD]", "color:#0fb;border-radius:3px;padding:2px 4px;", ...args);
+  // -----------------
+  // util logs (an toàn)
+  // -----------------
+  const LOG = (...args) => {
+    try {
+      console.log("%c[HPBD]", "color:#0fb;border-radius:3px;padding:2px 4px;", ...args);
+    } catch (e) {
+      console.log("[HPBD]", ...args);
+    }
+  };
 
-  // decode helper that tolerates missing or already-decoded values
+  // Giải mã param an toàn (nếu đã decode thì trả về nguyên vẹn)
   function safeDecode(v) {
     if (!v) return "";
     try {
@@ -22,16 +30,27 @@
   }
 
   // parse URL params (works for both pages)
+  // Nếu vì lý do nào đó URLSearchParams ném lỗi, fallback thành empty URLSearchParams
   const URL_PARAMS = (() => {
-    try { return new URLSearchParams(window.location.search); } 
-    catch (e) { return new Map(); }
+    try {
+      return new URLSearchParams(window.location.search);
+    } catch (e) {
+      LOG("URLSearchParams init failed, using empty params", e);
+      return new URLSearchParams();
+    }
   })();
 
-  function param(name, altNames=[]) {
-    if (!(URL_PARAMS instanceof URLSearchParams)) return null;
-    if (URL_PARAMS.has(name)) return URL_PARAMS.get(name);
-    for (let a of altNames) if (URL_PARAMS.has(a)) return URL_PARAMS.get(a);
-    return null;
+  // Lấy param với danh sách tên thay thế
+  function param(name, altNames = []) {
+    try {
+      if (!(URL_PARAMS instanceof URLSearchParams)) return null;
+      if (URL_PARAMS.has(name)) return URL_PARAMS.get(name);
+      for (let a of altNames) if (URL_PARAMS.has(a)) return URL_PARAMS.get(a);
+      return null;
+    } catch (e) {
+      LOG("param() error:", e);
+      return null;
+    }
   }
 
   // detect page mode: generator or card display
@@ -44,10 +63,10 @@
      COMMON CONFIGS
      ----------------------- */
   const OCCASIONS = {
-    birthday:  { src: 'music/birthday.mp3',  bg: '#ffdde1' },
+    birthday: { src: 'music/birthday.mp3', bg: '#ffdde1' },
     christmas: { src: 'music/christmas.mp3', bg: '#0d0d0d' },
     womensday: { src: 'music/womensday.mp3', bg: '#ffe6f0' },
-    love:      { src: 'music/love.mp3',      bg: '#ff99bb' },
+    love: { src: 'music/love.mp3', bg: '#ff99bb' },
     midautumn: { src: 'music/midautumn.mp3', bg: '#3b1b00' }
   };
 
@@ -76,12 +95,16 @@
       if (!o) return;
       if (musicEl && o.src) {
         // set audio src but do not force play on all browsers; attempt and swallow errors
-        musicEl.src = o.src;
-        musicEl.load();
-        musicEl.play().catch(()=>{ /* autoplay blocked; user must press */ });
+        try {
+          musicEl.src = o.src;
+          musicEl.load();
+          musicEl.play().catch(()=>{ /* autoplay blocked; user must press */ });
+        } catch (e) {
+          LOG("Error setting music source:", e);
+        }
       }
       // set body background to simple color for clarity
-      document.body.style.background = o.bg;
+      try { document.body.style.background = o.bg; } catch (e) { /* ignore */ }
     }
 
     // snow effect (lightweight)
@@ -109,7 +132,9 @@
         const occ  = encodeURIComponent(occVal);
 
         // build card URL (use occ param)
-        const cardUrl = `${location.origin}${location.pathname.replace(/\/[^/]*$/, "")}/card.html?name=${name}&msg=${msg}&occ=${occ}&music=${encodeURIComponent(musicSel)}`;
+        // ensure we produce a sensible path even if location.pathname ends with /
+        const basePath = location.pathname.replace(/\/[^/]*$/, "") || "";
+        const cardUrl = `${location.origin}${basePath}/card.html?name=${name}&msg=${msg}&occ=${occ}&music=${encodeURIComponent(musicSel)}`;
 
         // Clear old
         if (qrContainer) qrContainer.innerHTML = "";
@@ -151,7 +176,7 @@
           a.href = cardUrl;
           a.textContent = cardUrl;
           a.style.wordBreak = "break-all";
-          qrContainer.appendChild(a);
+          if (qrContainer) qrContainer.appendChild(a);
           LOG("QRCode library missing — displayed plain link");
         }
 
@@ -217,8 +242,11 @@
             const dist = Math.sqrt(dx*dx + dy*dy);
             if (dist < mouse.radius){
               const force = (mouse.radius - dist) / mouse.radius;
-              f.vx += (dx/dist) * force * 0.5;
-              f.vy += (dy/dist) * force * 0.5;
+              // protect against dist == 0
+              const nx = dist === 0 ? 0.001 : dx/dist;
+              const ny = dist === 0 ? 0.001 : dy/dist;
+              f.vx += nx * force * 0.5;
+              f.vy += ny * force * 0.5;
             }
           }
 
@@ -239,23 +267,27 @@
   } // end runGenerator
 
 
-  /* ===============================
-     PART B — Card page logic
-     =============================== */
+  // =========================
+  // PHẦN B — Logic hiển thị thiệp (card page)
+  // =========================
   function runCard() {
     LOG("Init card display");
 
-    // read params with tolerant names: occ or occasion or type
-    const rawOcc = param("occ", ["occasion","type"]) || "birthday";
+    // Lấy params từ URL: occ / occasion / type
+    // Nếu không có thì mặc định là “birthday”
+    const rawOcc = param("occ", ["occasion", "type"]) || "birthday";
     const occ = (typeof rawOcc === "string") ? rawOcc : "birthday";
+
+    // Lấy tên & lời chúc từ URL
     const rawName = param("name") || "";
-    const rawMsg  = param("msg")  || "";
-    const name = safeDecode(rawName);
-    const msg  = safeDecode(rawMsg);
+    const rawMsg = param("msg") || "";
+    const name = safeDecode(rawName); // giải mã text để không bị lỗi ký tự
+    const msg = safeDecode(rawMsg);
 
     LOG("card params:", { occ, name, msg });
 
-    // cards mapping (should match DOM ids)
+    // MAP các loại thiệp với id trong HTML
+    // Phải trùng với id bạn đặt trong file HTML
     const CARD_MAP = {
       birthday: { id: "cardBirthday", nameID: "nameBirthday", msgID: "msgBirthday" },
       christmas: { id: "cardChristmas", nameID: "nameChristmas", msgID: "msgChristmas" },
@@ -264,73 +296,82 @@
       midautumn: { id: "cardMidautumn", nameID: "nameMidautumn", msgID: "msgMidautumn" }
     };
 
-    // hide all if exist
+    // Ẩn toàn bộ các thiệp (nếu có trong DOM)
     Object.values(CARD_MAP).forEach(c => {
       const el = document.getElementById(c.id);
       if (el) el.style.display = "none";
     });
 
-    // show requested
+    // Chọn loại thiệp đúng theo param occ
     const cardDef = CARD_MAP[occ] || CARD_MAP["birthday"];
     const elCard = document.getElementById(cardDef.id);
+
+    // Nếu không tìm thấy card tương ứng → fallback sang birthday
     if (!elCard) {
-      LOG("Card element not found for occ:", occ, "- showing birthday fallback");
-      const fallback = CARD_MAP["birthday"];
-      const fb = document.getElementById(fallback.id);
+      LOG("Không tìm thấy card theo occ:", occ, " - fallback birthday");
+      const fb = document.getElementById(CARD_MAP["birthday"].id);
       if (fb) fb.style.display = "block";
       return;
     }
 
-    // populate texts
+    // Gán tên & lời chúc vào thiệp
     const elName = document.getElementById(cardDef.nameID);
-    const elMsg  = document.getElementById(cardDef.msgID);
+    const elMsg = document.getElementById(cardDef.msgID);
     if (elName) elName.innerText = name;
     if (elMsg) elMsg.innerText = msg;
 
-    // show with a small animation
+    // Animation xuất hiện nhẹ
     elCard.style.display = "block";
     elCard.style.opacity = "0";
     elCard.style.transform = "translateY(8px)";
-    setTimeout(()=> {
+
+    setTimeout(() => {
       elCard.style.transition = "opacity 700ms ease, transform 700ms ease";
       elCard.style.opacity = "1";
       elCard.style.transform = "translateY(0)";
     }, 40);
 
-    // optionally play music param=music or occ
+    // ======== Nhạc nền =================
     const musicEl = document.getElementById("bgMusic");
+
     if (musicEl) {
       const musicParam = param("music", []);
-      const musicKey = musicParam || occ;
+      const musicKey = musicParam || occ; // ưu tiên param music, nếu không có dùng occ
+
       const m = OCCASIONS[musicKey] || OCCASIONS[occ];
+
+      // Nếu có nhạc → load + play
       if (m && m.src) {
         musicEl.src = m.src;
         musicEl.load();
-        musicEl.play().catch(()=> {
-          // probably autoplay blocked — user must press
-          LOG("Autoplay blocked on card — user gesture needed");
+
+        musicEl.play().catch(() => {
+          // Autoplay bị chặn (trình duyệt bắt yêu cầu user tương tác)
+          LOG("Autoplay blocked — user cần bấm play");
         });
       }
     }
 
-    // optionally apply simple background theme
+    // ======== Theme nền theo loại thiệp =========
     const theme = OCCASIONS[occ];
-    if (theme) document.body.style.background = theme.bg || document.body.style.background;
+    if (theme)
+      document.body.style.background = theme.bg || document.body.style.background;
 
-  } // end runCard
+  } // hết runCard()
 
 
 
-  /* ===========================
-     boot
-     =========================== */
+  // ===========================
+  // Boot — chạy khi HTML load xong
+  // ===========================
   document.addEventListener("DOMContentLoaded", () => {
     try {
-      if (isGenerator) runGenerator();
-      if (isCard) runCard();
+      if (isGenerator) runGenerator(); // chạy trang generator
+      if (isCard) runCard();           // chạy trang thiệp
 
+      // Nếu không phải 2 loại trang trên → script đứng im
       if (!isGenerator && !isCard) {
-        LOG("No generator or card DOM markers found on this page. Script loaded but idle.");
+        LOG("Không có generator hoặc card - script loaded nhưng không chạy.");
       }
     } catch (err) {
       console.error("HPBD main error:", err);

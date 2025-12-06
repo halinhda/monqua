@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Thư phép thuật</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fbc2eb, #a1c4fd, #c2e9fb);
+  background-size: 1000% 1000%;
+  animation: gradientShift 20s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-family: 'Great Vibes', cursive;
+  overflow: hidden;
+}
+
+/* nền gradient đổi màu */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* phong bì */
+.envelope {
+  width: 320px;
+  height: 220px;
+  background: #c19a6b;
+  position: relative;
+  border-radius: 8px;
+  box-shadow: 0 0 40px rgba(255,255,255,0.6);
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* nắp phong bì */
+.flap {
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 0;
+  border-left: 160px solid transparent;
+  border-right: 160px solid transparent;
+  border-bottom: 110px solid #a67c52;
+  transform-origin: top;
+  transition: transform 1s;
+}
+.envelope.open .flap {
+  transform: rotateX(-180deg);
+}
+
+/* lá thư */
+.letter {
+  position: absolute;
+  bottom: -100%;
+  left: 0;
+  width: 100%; height: 100%;
+  background: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: bottom 1.5s;
+}
+.envelope.open .letter {
+  bottom: 0; /* trượt lên */
+}
+
+/* chữ viết tay */
+.message {
+  font-size: 2rem;
+  color: #444;
+  text-shadow: 0 0 8px rgba(255,182,193,0.6);
+  border-right: 2px solid #444;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+}
+.envelope.open .message {
+  animation: typing 5s steps(40, end) forwards, blink 0.7s infinite;
+}
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+/* hạt sáng bay quanh phong bì */
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  animation: float 6s infinite ease-in-out;
+}
+@keyframes float {
+  0% { transform: translateY(0) translateX(0); opacity: 1; }
+  50% { transform: translateY(-50px) translateX(30px); opacity: 0.6; }
+  100% { transform: translateY(0) translateX(0); opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="envelope" id="envelope">
+  <div class="flap"></div>
+  <div class="letter">
+    <div class="message">Chúc bạn một ngày thật vui vẻ 💖</div>
+  </div>
+</div>
+
+<script>
+const envelope = document.getElementById("envelope");
+envelope.addEventListener("click", () => {
+  envelope.classList.toggle("open");
+});
+
+// tạo hạt sáng bay quanh phong bì
+function createParticles() {
+  for (let i = 0; i < 20; i++) {
+    const particle = document.createElement("div");
+    particle.className = "particle";
+    particle.style.left = (Math.random() * window.innerWidth) + "px";
+    particle.style.top = (Math.random() * window.innerHeight) + "px";
+    particle.style.animationDuration = (3 + Math.random()*3) + "s";
+    document.body.appendChild(particle);
+  }
+}
+createParticles();
+</script>
+
+</body>
+</html>

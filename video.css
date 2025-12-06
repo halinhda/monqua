@@ -1,0 +1,98 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+/* Countdown */
+#countdown {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 140px;
+    font-weight: 800;
+    opacity: 1;
+    transition: transform 0.3s ease-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(0.2) translate(-50%, -50%); opacity: 0; }
+    50% { transform: scale(1.3) translate(-50%, -50%); opacity: 1; }
+    100% { transform: scale(1) translate(-50%, -50%); opacity: 0; }
+}
+
+/* Main content */
+.content {
+    position: absolute;
+    width: 100%;
+    top: 20%;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: 1.2s ease;
+}
+
+.content.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.photo {
+    width: 260px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 30px rgba(255,255,255,0.4);
+}
+
+/* Scrollable glowing text */
+.msg-container {
+    width: 80%;
+    max-width: 800px;
+    margin: 0 auto;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff;
+    color: #00f0ff;
+}
+
+.msg-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.msg-container::-webkit-scrollbar-thumb {
+    background: #00eaff;
+    border-radius: 4px;
+}
+
+/* Snow canvas */
+#snowCanvas {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Music button */
+#musicBtn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    z-index: 999;
+}
+
+#musicBtn.playing {
+    color: #00ffcc;
+}

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Album ảnh xoay 3D</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: #0d0d0d; /* nền tối để pháo hoa nổi bật */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.scene {
+  width: 300px;
+  height: 300px;
+  perspective: 1000px;
+}
+
+.cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  /* góc mặc định để thấy 3D */
+  transform: rotateX(-20deg) rotateY(20deg);
+  transition: transform 1s;
+  box-shadow: 0 0 40px rgba(255,255,255,0.6);
+  animation: glow 5s infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+  to   { box-shadow: 0 0 60px rgba(255,255,255,0.8); }
+}
+
+.face {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: #fff;
+  border: 2px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.face img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+}
+
+/* Các mặt của khối lập phương */
+.front  { transform: rotateY(0deg) translateZ(150px); }
+.back   { transform: rotateY(180deg) translateZ(150px); }
+.right  { transform: rotateY(90deg) translateZ(150px); }
+.left   { transform: rotateY(-90deg) translateZ(150px); }
+.top    { transform: rotateX(90deg) translateZ(150px); }
+.bottom { transform: rotateX(-90deg) translateZ(150px); }
+
+/* hiệu ứng morph thành sphere */
+.cube.sphere {
+  border-radius: 50%;
+  transform: scale(1.2);
+  transition: all 2s ease-in-out;
+}
+
+/* canvas pháo hoa */
+#fireworks {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* không chặn click */
+}
+</style>
+</head>
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="scene">
+  <div class="cube" id="cube">
+    <div class="face front"><img src="https://picsum.photos/id/1015/300/300" alt="Ảnh 1"></div>
+    <div class="face back"><img src="https://picsum.photos/id/1025/300/300" alt="Ảnh 2"></div>
+    <div class="face right"><img src="https://picsum.photos/id/1035/300/300" alt="Ảnh 3"></div>
+    <div class="face left"><img src="https://picsum.photos/id/1045/300/300" alt="Ảnh 4"></div>
+    <div class="face top"><img src="https://picsum.photos/id/1055/300/300" alt="Ảnh 5"></div>
+    <div class="face bottom"><img src="https://picsum.photos/id/1065/300/300" alt="Ảnh 6"></div>
+  </div>
+</div>
+
+<script>
+let angleX = -20;
+let angleY = 20;
+let clickCount = 0;
+const cube = document.getElementById("cube");
+
+// canvas pháo hoa
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+let particles = [];
+
+function createFirework(x, y) {
+  const colors = ["#ff4d4d","#ffd633","#66ff66","#66ccff","#cc66ff"];
+  for (let i = 0; i < 40; i++) {
+    particles.push({
+      x: x,
+      y: y,
+      angle: Math.random() * 2 * Math.PI,
+      speed: Math.random() * 4 + 2,
+      radius: Math.random() * 3 + 2,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      life: 60
+    });
+  }
+}
+
+function animateFireworks() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach((p,i) => {
+    p.x += Math.cos(p.angle) * p.speed;
+    p.y += Math.sin(p.angle) * p.speed;
+    p.life--;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.radius,0,2*Math.PI);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+    if (p.life <= 0) particles.splice(i,1);
+  });
+  requestAnimationFrame(animateFireworks);
+}
+animateFireworks();
+
+document.body.addEventListener("click", (e) => {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const x = e.clientX;
+  const y = e.clientY;
+
+  // xác định click ở vùng nào
+  if (x < w/3) {
+    angleY -= 90; // xoay trái
+  } else if (x > 2*w/3) {
+    angleY += 90; // xoay phải
+  } else if (y < h/3) {
+    angleX += 90; // xoay lên
+  } else if (y > 2*h/3) {
+    angleX -= 90; // xoay xuống
+  } else {
+    angleY += 90; // mặc định xoay phải nếu click giữa
+  }
+
+  cube.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg)`;
+
+  // 🎆 pháo hoa tại vị trí click
+  createFirework(x,y);
+
+  // sau vài lần click → morph thành sphere
+  clickCount++;
+  if (clickCount === 6) {
+    cube.classList.add("sphere");
+  }
+});
+</script>
+
+</body>
+</html>

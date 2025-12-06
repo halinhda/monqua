@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Quyển sách nhiều trang</title>
+<style>
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f0e6d6;
+  margin: 0;
+}
+
+.book {
+  width: 300px;
+  height: 400px;
+  perspective: 1000px;
+  position: relative;
+}
+
+.cover, .page {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border-radius: 8px;
+  transform-origin: left center;
+  transition: transform 0.8s ease-in-out;
+}
+
+/* bìa */
+.cover {
+  background: linear-gradient(135deg, #8b5e3c, #d4a373);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  font-family: "Georgia", serif;
+  z-index: 100;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+/* trang */
+.page {
+  background: #fff;
+  padding: 20px;
+  text-align: center;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* hiệu ứng lật */
+.book.open .cover { transform: rotateY(-180deg); }
+.page.flipped { transform: rotateY(-180deg); }
+
+/* nút điều khiển */
+.controls {
+  margin-top: 20px;
+  z-index: 200;
+}
+button {
+  padding: 8px 16px;
+  margin: 0 10px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="book" id="book">
+  <div class="cover">📖 Bìa sách</div>
+  <div class="page"><h2>Trang 1</h2><p>Chúc bạn vui vẻ 💖</p></div>
+  <div class="page"><h2>Trang 2</h2><p>Mọi điều tốt đẹp sẽ đến!</p></div>
+  <div class="page"><h2>Trang 3</h2><p>Luôn mạnh mẽ 🌟</p></div>
+  <div class="page"><h2>Trang 4</h2><p>Thành công và hạnh phúc 🎉</p></div>
+</div>
+
+<div class="controls">
+  <button id="prev">⬅️ Prev</button>
+  <button id="next">➡️ Next</button>
+</div>
+
+<script>
+const book = document.getElementById("book");
+const cover = book.querySelector(".cover");
+const pages = Array.from(book.querySelectorAll(".page"));
+
+let currentPage = 0; // 0 = bìa, 1 = trang 1, ...
+pages.forEach((p, i) => p.style.zIndex = 90 - i);
+
+// Next
+document.getElementById("next").addEventListener("click", () => {
+  if (currentPage === 0) {
+    // mở bìa
+    book.classList.add("open");
+    currentPage = 1;
+  } else if (currentPage <= pages.length) {
+    const page = pages[currentPage - 1];
+    page.classList.add("flipped");
+    page.style.zIndex = 150 + currentPage;
+    currentPage++;
+  }
+});
+
+// Prev
+document.getElementById("prev").addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    const page = pages[currentPage - 1];
+    page.classList.remove("flipped");
+    page.style.zIndex = 90 - (currentPage - 1);
+  } else if (currentPage === 1) {
+    // quay về bìa
+    book.classList.remove("open");
+    currentPage = 0;
+  }
+});
+</script>
+
+</body>
+</html>
